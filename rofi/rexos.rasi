@@ -1,0 +1,62 @@
+/* RexOS — Rofi launcher theme. A clean centered card with teal accents. */
+
+* {
+    bg0:     #161a26ee;
+    bg1:     #1e2436;
+    fg0:     #e8eaf0;
+    fg1:     #b8bdcc;
+    accent:  #14b8c4;
+    accent2: #3ad4de;
+
+    background-color: transparent;
+    text-color:       @fg0;
+    font:             "JetBrainsMono Nerd Font 12";
+}
+
+window {
+    width:            600px;
+    border-radius:    16px;
+    background-color: @bg0;
+    padding:          18px;
+    location:         center;
+}
+
+inputbar {
+    background-color: @bg1;
+    border-radius:    10px;
+    padding:          12px 16px;
+    spacing:          10px;
+    children:         [ prompt, entry ];
+}
+
+prompt {
+    text-color: @accent;
+}
+
+entry {
+    placeholder:        "Search RexOS…";
+    placeholder-color:  #6b7280;
+}
+
+listview {
+    lines:     8;
+    spacing:   4px;
+    padding:   12px 0 0 0;
+    scrollbar: false;
+}
+
+element {
+    padding:       10px 14px;
+    border-radius: 10px;
+    spacing:       12px;
+}
+element selected {
+    background-color: @accent;
+    text-color:       #0f1117;
+}
+element-icon {
+    size: 24px;
+}
+element-text {
+    vertical-align: 0.5;
+}

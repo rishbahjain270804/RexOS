@@ -1,0 +1,8 @@
+# OS / editor cruft
+.DS_Store
+*.swp
+*~
+
+# local state (generated at runtime, not part of the repo)
+.local/
+*.log

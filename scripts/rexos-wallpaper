@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+# RexOS unified wallpaper engine.
+# Supports three kinds of wallpaper, picked automatically by file type:
+#   * static image (.png/.jpg/.webp)  -> hyprpaper / swww
+#   * video        (.mp4/.webm/.gif)  -> mpvpaper (live)
+#   * Wallpaper Engine scene (a dir)  -> linux-wallpaperengine (live)
+#
+# Usage:
+#   rexos-wallpaper set <path>   set a wallpaper (any type)
+#   rexos-wallpaper menu         pick one from the RexOS collection (rofi)
+#   rexos-wallpaper restore      reapply the last-used wallpaper (on login)
+
+WALLDIR="$HOME/.local/share/rexos/wallpapers"
+LIVEDIR="$HOME/.local/share/rexos/live"          # videos
+WEDIR="$HOME/.local/share/rexos/wallengine"      # wallpaper-engine scenes (one dir each)
+STATE="$HOME/.local/state/rexos-wallpaper"
+ROFI_THEME="$HOME/.config/rofi/rexos.rasi"
+
+kill_live() {
+    pkill -x mpvpaper 2>/dev/null
+    pkill -f linux-wallpaperengine 2>/dev/null
+}
+
+set_wall() {
+    local target="$1"
+    kill_live
+
+    if [ -d "$target" ]; then
+        # a Wallpaper Engine scene directory (contains project.json)
+        local id
+        id=$(basename "$target")
+        linux-wallpaperengine --screen-root "$(hyprctl monitors -j | jq -r '.[0].name')" \
+            --bg "$id" >/dev/null 2>&1 &
+        echo "$target" > "$STATE"
+        return
+    fi
+
+    case "${target,,}" in
+        *.mp4|*.webm|*.mkv|*.gif)
+            # live video wallpaper
+            local mon
+            mon=$(hyprctl monitors -j | jq -r '.[0].name')
+            mpvpaper -o "no-audio loop --loop-file=inf" "$mon" "$target" >/dev/null 2>&1 &
+            ;;
+        *)
+            # static image
+            if command -v swww >/dev/null; then
+                swww img "$target" --transition-type grow --transition-fps 60 2>/dev/null
+            else
+                hyprctl hyprpaper preload "$target" 2>/dev/null
+                hyprctl hyprpaper wallpaper ",$target" 2>/dev/null
+            fi
+            ;;
+    esac
+    echo "$target" > "$STATE"
+}
+
+menu() {
+    # build a list: static images, live videos, and WE scenes — labelled.
+    local list=""
+    for f in "$WALLDIR"/*; do [ -e "$f" ] && list+="  $(basename "$f")\n"; done
+    for f in "$LIVEDIR"/*; do [ -e "$f" ] && list+="  $(basename "$f")  (live)\n"; done
+    for d in "$WEDIR"/*/; do [ -d "$d" ] && list+="  $(basename "$d")  (engine)\n"; done
+
+    local pick
+    pick=$(echo -e "$list" | sed '/^$/d' | rofi -dmenu -i -p "Wallpaper" -theme "$ROFI_THEME")
+    [ -z "$pick" ] && exit 0
+
+    # strip the leading icon + trailing tag, then resolve the real path
+    local name
+    name=$(echo "$pick" | sed -E 's/^[^ ]+ +//; s/  \((live|engine)\)$//')
+
+    if   [ -e "$WALLDIR/$name" ]; then set_wall "$WALLDIR/$name"
+    elif [ -e "$LIVEDIR/$name" ]; then set_wall "$LIVEDIR/$name"
+    elif [ -d "$WEDIR/$name" ];   then set_wall "$WEDIR/$name"
+    fi
+}
+
+restore() {
+    [ -f "$STATE" ] && set_wall "$(cat "$STATE")"
+}
+
+mkdir -p "$WALLDIR" "$LIVEDIR" "$WEDIR" "$(dirname "$STATE")"
+
+case "$1" in
+    set)     set_wall "$2" ;;
+    menu)    menu ;;
+    restore) restore ;;
+    *)       echo "usage: rexos-wallpaper {set <path>|menu|restore}" ;;
+esac

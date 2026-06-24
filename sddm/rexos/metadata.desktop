@@ -1,0 +1,12 @@
+[SddmGreeterTheme]
+Name=RexOS
+Description=The RexOS login theme
+Author=RexOS
+License=MIT
+Type=sddm-theme
+Version=1.0
+MainScript=Main.qml
+ConfigFile=theme.conf
+TranslationsDirectory=
+Theme-Id=rexos
+Theme-API=2.0

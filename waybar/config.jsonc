@@ -1,0 +1,57 @@
+// RexOS — Waybar (the top bar)
+// Clean, minimal: RexOS logo, workspaces, clock, system stats, tray.
+{
+    "layer": "top",
+    "position": "top",
+    "height": 36,
+    "margin-top": 8,
+    "margin-left": 12,
+    "margin-right": 12,
+    "spacing": 6,
+
+    "modules-left": ["custom/rexos", "hyprland/workspaces"],
+    "modules-center": ["clock"],
+    "modules-right": ["pulseaudio", "network", "cpu", "memory", "battery", "tray"],
+
+    "custom/rexos": {
+        "format": "  RexOS",
+        "tooltip-format": "RexOS — your custom desktop",
+        "on-click": "rofi -show drun"
+    },
+
+    "hyprland/workspaces": {
+        "format": "{icon}",
+        "format-icons": {
+            "1": "1", "2": "2", "3": "3", "4": "4", "5": "5",
+            "active": "",
+            "default": ""
+        },
+        "on-click": "activate"
+    },
+
+    "clock": {
+        "format": "{:%H:%M}",
+        "format-alt": "{:%a %d %b  %H:%M}",
+        "tooltip-format": "<tt>{calendar}</tt>"
+    },
+
+    "cpu":    { "format": "  {usage}%", "interval": 2 },
+    "memory": { "format": "  {percentage}%" },
+    "battery": {
+        "format": "{icon} {capacity}%",
+        "format-icons": ["", "", "", "", ""],
+        "format-charging": " {capacity}%"
+    },
+    "network": {
+        "format-wifi": "  {essid}",
+        "format-ethernet": "  wired",
+        "format-disconnected": "  off",
+        "on-click": "nm-connection-editor"
+    },
+    "pulseaudio": {
+        "format": "  {volume}%",
+        "format-muted": "  muted",
+        "on-click": "pavucontrol"
+    },
+    "tray": { "spacing": 8 }
+}

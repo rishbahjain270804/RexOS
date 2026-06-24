@@ -1,0 +1,52 @@
+# RexOS — packages installed by install.sh (Arch / pacman names).
+# These give you the full mouse-driven desktop + real apps.
+
+# --- core desktop (Hyprland stack) ---
+hyprland
+hyprpaper
+waybar
+rofi-wayland
+swaync
+xdg-desktop-portal-hyprland
+qt5-wayland
+qt6-wayland
+
+# --- login manager ---
+sddm
+
+# --- terminal + shell + tools ---
+ghostty
+zsh
+starship
+yazi
+fastfetch
+
+# --- real apps (the whole point) ---
+firefox
+mpv
+imv
+
+# --- wallpapers (static + live) ---
+hyprpaper
+mpvpaper
+swww
+ffmpeg
+jq
+# linux-wallpaperengine is AUR-only; install.sh handles it via an AUR helper
+
+# --- system / utilities ---
+networkmanager
+network-manager-applet
+pavucontrol
+brightnessctl
+grim
+slurp
+wl-clipboard
+cliphist
+polkit-gnome
+
+# --- fonts ---
+ttf-jetbrains-mono-nerd
+inter-font
+noto-fonts
+noto-fonts-emoji

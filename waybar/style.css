@@ -1,0 +1,60 @@
+/* RexOS — Waybar style. Dark, rounded, teal accent. */
+
+* {
+    font-family: "JetBrainsMono Nerd Font", "Inter";
+    font-size: 13px;
+    border: none;
+    border-radius: 0;
+}
+
+window#waybar {
+    background: transparent;
+}
+
+/* the bar itself: a floating rounded dark pill */
+.modules-left, .modules-center, .modules-right {
+    background: rgba(22, 26, 38, 0.85);
+    border-radius: 12px;
+    padding: 0 6px;
+    margin: 0 4px;
+}
+
+#custom-rexos {
+    color: #14b8c4;
+    font-weight: bold;
+    padding: 0 14px;
+    margin-right: 4px;
+}
+
+#workspaces button {
+    color: #6b7280;
+    padding: 0 8px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+#workspaces button.active {
+    color: #0f1117;
+    background: #14b8c4;
+}
+#workspaces button:hover {
+    color: #e8eaf0;
+    background: rgba(58, 212, 222, 0.2);
+}
+
+#clock {
+    color: #e8eaf0;
+    font-weight: bold;
+    padding: 0 16px;
+}
+
+#cpu, #memory, #network, #pulseaudio, #battery {
+    color: #b8bdcc;
+    padding: 0 10px;
+}
+#network { color: #3ad4de; }
+#battery.charging { color: #4ade80; }
+#battery.critical { color: #f87171; }
+
+#tray {
+    padding: 0 10px;
+}
