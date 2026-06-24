@@ -15,7 +15,8 @@ qt6-wayland
 sddm
 
 # --- terminal + shell + tools ---
-ghostty
+foot
+kitty
 zsh
 starship
 yazi
@@ -28,11 +29,13 @@ imv
 
 # --- wallpapers (static + live) ---
 hyprpaper
-mpvpaper
 swww
 ffmpeg
 jq
-# linux-wallpaperengine is AUR-only; install.sh handles it via an AUR helper
+mpv
+# NOTE: mpvpaper + linux-wallpaperengine are AUR-only — installed later from
+# inside RexOS with:  yay -S mpvpaper linux-wallpaperengine-git
+# (static + swww wallpapers work without them; video lives need mpvpaper)
 
 # --- system / utilities ---
 networkmanager
@@ -47,6 +50,7 @@ polkit-gnome
 
 # --- fonts ---
 ttf-jetbrains-mono-nerd
-inter-font
+ttf-jetbrains-mono
 noto-fonts
 noto-fonts-emoji
+ttf-font-awesome

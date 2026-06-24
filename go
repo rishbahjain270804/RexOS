@@ -83,9 +83,16 @@ systemctl enable NetworkManager
 # Clone the repo to the user's home.
 su - "$USERNAME" -c 'git clone https://github.com/rishbahjain270804/RexOS.git'
 
-# Install the packages AS ROOT (sudo can't prompt inside this non-interactive
-# chroot). pacman is run directly here; install.sh then only does user config.
-pacman -S --needed --noconfirm \$(grep -vE '^[[:space:]]*#|^[[:space:]]*\$' /home/$USERNAME/RexOS/packages.txt) || true
+# Install packages AS ROOT. Install resiliently: try the whole list, and if any
+# package is missing (e.g. AUR-only), fall back to installing one-by-one so a
+# single bad package can't abort the rest.
+PKGS=\$(grep -vE '^[[:space:]]*#|^[[:space:]]*\$' /home/$USERNAME/RexOS/packages.txt)
+pacman -Sy --needed --noconfirm \$PKGS || {
+    echo "(some packages missing — installing individually)"
+    for p in \$PKGS; do pacman -S --needed --noconfirm "\$p" || echo "  skip \$p"; done
+}
+# make sure the essentials are present no matter what
+pacman -S --needed --noconfirm hyprland waybar rofi-wayland sddm firefox foot || true
 
 # Install the RexOS login theme + enable services AS ROOT here.
 if [ -d /home/$USERNAME/RexOS/sddm/rexos ]; then
