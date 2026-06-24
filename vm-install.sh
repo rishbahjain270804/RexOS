@@ -21,6 +21,12 @@ read -p "Type YES to continue: " ok
 
 read -p "Choose a password for user '$USERNAME': " -s PW; echo
 
+# --- clean up any mounts from a previous attempt (so mkfs won't fail) ---
+echo "==> Clearing previous mounts..."
+umount -R /mnt 2>/dev/null || true
+swapoff -a 2>/dev/null || true
+umount "${DISK}1" "${DISK}2" 2>/dev/null || true
+
 # --- partition: 1 EFI (512M) + 1 root (rest) ---
 echo "==> Partitioning $DISK..."
 sgdisk -Z "$DISK"
