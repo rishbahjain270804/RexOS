@@ -1,0 +1,13 @@
+NAME="RexOS"
+PRETTY_NAME="RexOS"
+ID=rexos
+ID_LIKE=arch
+BUILD_ID=rolling
+ANSI_COLOR="38;2;20;184;196"
+HOME_URL="https://github.com/rishbahjain270804/RexOS"
+DOCUMENTATION_URL="https://github.com/rishbahjain270804/RexOS"
+SUPPORT_URL="https://github.com/rishbahjain270804/RexOS"
+BUG_REPORT_URL="https://github.com/rishbahjain270804/RexOS/issues"
+LOGO=rexos
+VERSION="1.0"
+VERSION_ID="1.0"

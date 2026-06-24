@@ -21,13 +21,23 @@ fi
 
 # 2. lay down configs
 echo "==> Installing RexOS configs..."
-mkdir -p "$CFG/hypr" "$CFG/waybar" "$CFG/rofi"
+mkdir -p "$CFG/hypr" "$CFG/waybar" "$CFG/rofi" "$CFG/fastfetch"
 
 cp "$REXOS_DIR/theme/colors.conf"     "$CFG/hypr/colors.conf"
 cp "$REXOS_DIR/hypr/hyprland.conf"    "$CFG/hypr/hyprland.conf"
 cp "$REXOS_DIR/waybar/config.jsonc"   "$CFG/waybar/config.jsonc"
 cp "$REXOS_DIR/waybar/style.css"      "$CFG/waybar/style.css"
 cp "$REXOS_DIR/rofi/rexos.rasi"       "$CFG/rofi/rexos.rasi"
+
+# RexOS fastfetch branding (shows RexOS, not Arch) + neofetch alias
+cp "$REXOS_DIR/branding/fastfetch.jsonc" "$CFG/fastfetch/config.jsonc"
+cp "$REXOS_DIR/branding/rexos-logo.txt"  "$CFG/fastfetch/rexos-logo.txt"
+# run fastfetch on terminal open, aliased as neofetch
+SHRC="$HOME/.bashrc"; [ -f "$HOME/.zshrc" ] && SHRC="$HOME/.zshrc"
+grep -q "alias neofetch" "$SHRC" 2>/dev/null || {
+    echo 'alias neofetch="fastfetch"' >> "$SHRC"
+    echo 'fastfetch' >> "$SHRC"
+}
 
 # wallpapers — static collection + folders for live (video) and engine scenes.
 WALLDIR="$HOME/.local/share/rexos/wallpapers"

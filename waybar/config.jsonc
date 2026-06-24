@@ -14,9 +14,9 @@
     "modules-right": ["pulseaudio", "network", "cpu", "memory", "battery", "tray"],
 
     "custom/rexos": {
-        "format": "  RexOS",
-        "tooltip-format": "RexOS — your custom desktop",
-        "on-click": "rofi -show drun"
+        "format": "  RexOS ",
+        "tooltip-format": "RexOS — the from-scratch operating system",
+        "on-click": "rofi -show drun -theme ~/.config/rofi/rexos.rasi"
     },
 
     "hyprland/workspaces": {

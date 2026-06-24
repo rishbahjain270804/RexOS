@@ -78,6 +78,9 @@ echo "root:$PW" | chpasswd
 echo "%wheel ALL=(ALL:ALL) ALL" > /etc/sudoers.d/wheel
 
 systemctl enable NetworkManager
+# enable SSH in the installed system (so it can be managed remotely)
+pacman -S --needed --noconfirm openssh || true
+systemctl enable sshd
 
 # --- install RexOS desktop ---
 # Clone the repo to the user's home.
@@ -105,6 +108,9 @@ systemctl enable NetworkManager.service || true
 
 # Run the user-level config part of the RexOS installer (no sudo needed now).
 su - "$USERNAME" -c 'cd ~/RexOS && export REXOS_NO_PACMAN=1 && bash install.sh'
+
+# REBRAND the system as RexOS (os-release, session name, boot title, motd).
+bash /home/$USERNAME/RexOS/branding/rebrand.sh || true
 CHROOT
 
 chmod +x /mnt/root/setup.sh
