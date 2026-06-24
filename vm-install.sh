@@ -73,14 +73,25 @@ echo "%wheel ALL=(ALL:ALL) ALL" > /etc/sudoers.d/wheel
 
 systemctl enable NetworkManager
 
-# --- install RexOS desktop as the user ---
-su - "$USERNAME" -c '
-  cd ~
-  git clone https://github.com/rishbahjain270804/RexOS.git
-  cd RexOS
-  chmod +x install.sh
-  ./install.sh
-'
+# --- install RexOS desktop ---
+# Clone the repo to the user's home.
+su - "$USERNAME" -c 'git clone https://github.com/rishbahjain270804/RexOS.git'
+
+# Install the packages AS ROOT (sudo can't prompt inside this non-interactive
+# chroot). pacman is run directly here; install.sh then only does user config.
+pacman -S --needed --noconfirm \$(grep -vE '^[[:space:]]*#|^[[:space:]]*\$' /home/$USERNAME/RexOS/packages.txt) || true
+
+# Install the RexOS login theme + enable services AS ROOT here.
+if [ -d /home/$USERNAME/RexOS/sddm/rexos ]; then
+    cp -r /home/$USERNAME/RexOS/sddm/rexos /usr/share/sddm/themes/
+    mkdir -p /etc/sddm.conf.d
+    printf '[Theme]\nCurrent=rexos\n' > /etc/sddm.conf.d/rexos.conf
+fi
+systemctl enable sddm.service || true
+systemctl enable NetworkManager.service || true
+
+# Run the user-level config part of the RexOS installer (no sudo needed now).
+su - "$USERNAME" -c 'cd ~/RexOS && export REXOS_NO_PACMAN=1 && bash install.sh'
 CHROOT
 
 chmod +x /mnt/root/setup.sh

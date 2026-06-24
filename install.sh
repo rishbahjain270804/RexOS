@@ -13,9 +13,11 @@ echo " |  _ <  __/>  <| |_| |___) |"
 echo " |_| \\_\\___/_/\\_\\\\___/|____/"
 echo
 
-# 1. install packages
-echo "==> Installing packages..."
-sudo pacman -S --needed --noconfirm $(grep -vE '^\s*#|^\s*$' "$REXOS_DIR/packages.txt")
+# 1. install packages (skip if the VM installer already did it as root)
+if [ -z "$REXOS_NO_PACMAN" ]; then
+    echo "==> Installing packages..."
+    sudo pacman -S --needed --noconfirm $(grep -vE '^\s*#|^\s*$' "$REXOS_DIR/packages.txt")
+fi
 
 # 2. lay down configs
 echo "==> Installing RexOS configs..."
@@ -51,27 +53,32 @@ fi
 "$HOME/.local/bin/rexos-wallpaper" set "$WALLDIR/rexos-wall.png" 2>/dev/null || true
 
 # --- AUR: linux-wallpaperengine (for Steam Wallpaper Engine scenes) ---
-echo "==> Installing AUR helper (yay) + linux-wallpaperengine..."
-if ! command -v yay >/dev/null; then
-    sudo pacman -S --needed --noconfirm git base-devel
-    tmp=$(mktemp -d); git clone https://aur.archlinux.org/yay.git "$tmp/yay"
-    ( cd "$tmp/yay" && makepkg -si --noconfirm )
-fi
-yay -S --needed --noconfirm linux-wallpaperengine-git jq || \
-    echo "   (skip linux-wallpaperengine if it fails - video live wallpapers still work)"
-
-# 3. login screen theme
-echo "==> Installing RexOS login (SDDM)..."
-if [ -d "$REXOS_DIR/sddm/rexos" ]; then
-    sudo cp -r "$REXOS_DIR/sddm/rexos" /usr/share/sddm/themes/
-    sudo mkdir -p /etc/sddm.conf.d
-    echo -e "[Theme]\nCurrent=rexos" | sudo tee /etc/sddm.conf.d/rexos.conf >/dev/null
+# Optional + needs sudo, so skip during the automated VM install. You can run
+# it later from inside RexOS:  yay -S linux-wallpaperengine-git
+if [ -z "$REXOS_NO_PACMAN" ]; then
+    echo "==> Installing AUR helper (yay) + linux-wallpaperengine..."
+    if ! command -v yay >/dev/null; then
+        sudo pacman -S --needed --noconfirm git base-devel
+        tmp=$(mktemp -d); git clone https://aur.archlinux.org/yay.git "$tmp/yay"
+        ( cd "$tmp/yay" && makepkg -si --noconfirm )
+    fi
+    yay -S --needed --noconfirm linux-wallpaperengine-git jq || \
+        echo "   (skip linux-wallpaperengine if it fails - video live wallpapers still work)"
 fi
 
-# 4. enable services
-echo "==> Enabling services..."
-sudo systemctl enable sddm.service
-sudo systemctl enable NetworkManager.service
+# 3 + 4. login theme + services — only when NOT run by the VM installer
+# (the VM installer does these as root; here we'd need sudo).
+if [ -z "$REXOS_NO_PACMAN" ]; then
+    echo "==> Installing RexOS login (SDDM)..."
+    if [ -d "$REXOS_DIR/sddm/rexos" ]; then
+        sudo cp -r "$REXOS_DIR/sddm/rexos" /usr/share/sddm/themes/
+        sudo mkdir -p /etc/sddm.conf.d
+        echo -e "[Theme]\nCurrent=rexos" | sudo tee /etc/sddm.conf.d/rexos.conf >/dev/null
+    fi
+    echo "==> Enabling services..."
+    sudo systemctl enable sddm.service
+    sudo systemctl enable NetworkManager.service
+fi
 
 echo
 echo "==> RexOS installed! Reboot, and you'll boot into RexOS."
